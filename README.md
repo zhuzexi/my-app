@@ -1,4 +1,4 @@
-# hjwh_v1
+# vue-app
 
 ## Project setup
 ```
