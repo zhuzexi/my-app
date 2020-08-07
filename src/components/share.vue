@@ -3,7 +3,7 @@
 		<van-share-sheet
 			style="background: #fff;"
 			class="share"
-		  	v-model="showShare"
+		  	v-model="isShowShare"
 		  	title="立即分享给好友"
 		  	:options="options"
 		  	@select="onSelect"
@@ -12,6 +12,7 @@
 </template>
 
 <script>
+	import wx from "@/assets/img/share_wx.png"
 	export default {
 		props: {
 			showShare: {
@@ -21,27 +22,33 @@
 		},
 		data() {
 			return {
+				isShowShare: this.showShare,
 				options: [
-		        	{ name: '微信好友', icon: 'wechat' }
+		        	{ name: '微信好友', id: 'weixin', type: true, icon: 'wechat' },
+		        	{ name: '朋友圈', id: 'weixin', type: false, icon: wx }
 		    	],
 			    memberKey: JSON.parse(window.localStorage.getItem('memberKey'))
 			}
+		},
+		watch: {
+		 	showShare(val) {
+		 		this.isShowShare = val;
+		 	},
+		 	isShowShare(val){
+ 				this.$emit("on-change",val);
+ 			}
 		},
 		methods: {
 			onSelect(option) {
 				let that = this;
 				this.plusReady(() => {
 					plus.share.getServices(function(s){
-//			            shares = s;
-//			            console.log(shares);
 			            var Obj = {}
 			            for(var i in s){
 			                Obj[s[i].id] = s[i];
 			            }
-//			            shareObj = Obj;
 			            that.shareObj = Obj;
-			            that.shareAction('weixin', true);
-			            console.log('xxxx',that.shareObj);
+			            that.shareAction(option.id, option.type);
 			        }, function(e){
 	//		            outSet('获取分享服务列表失败：'+e.message);
 			        });
@@ -56,8 +63,6 @@
 		            console.log("分享组件未准备好，请稍后再试");
 		            return;
 		        }
-		        console.log('====',target['weixin']);
-		        console.log('是否认证',target[id].authenticated);
 		        if(target[id].authenticated){
 		            that.shareMessage(target[id], shareType);
 		        }else{

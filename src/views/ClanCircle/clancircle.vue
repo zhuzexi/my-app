@@ -146,10 +146,7 @@ export default {
 				})
 			} else if(item.text == "功德"){
 				this.$router.push({
-					path: "/imgindex",
-					query: {
-						id: 'pic1'
-					}
+					path: "/contribute"
 				})
 			} else if(item.text == "祭拜") {
 				this.$router.push({

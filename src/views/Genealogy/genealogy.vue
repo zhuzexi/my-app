@@ -153,7 +153,8 @@ export default {
 				},
 				{
 					imgUrl: require('../../assets/img/zp_icon/qxt.png'),
-					text: "迁徙图"
+					text: "迁徙图",
+					url: "/migrate"
 				}
 			],
 			zcList: [

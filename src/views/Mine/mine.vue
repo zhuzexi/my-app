@@ -78,7 +78,7 @@ export default {
 //				{iconImg: recommend_iconImg3,text: "生辰八字"},
 //				{iconImg: recommend_iconImg4,text: "我的设置"},
 				{iconImg: recommend_iconImg5,text: "功能介绍"},
-				{iconImg: recommend_iconImg4,text: "地址管理"},
+				{iconImg: recommend_iconImg4,text: "地址管理", url: "/address"},
 				{iconImg: recommend_iconImg6,text: "退出登录"}
 			],
 			//我的服务
@@ -90,10 +90,17 @@ export default {
 			]
 		};
 	},
-	mounted() {},
+	computed: {
+		memberKey() {
+			return this.$store.getters.getMemberKey
+		}
+	},
 	methods: {
 		recommendClick(item) {
-			let memberKey = JSON.parse(window.localStorage.getItem('memberKey'));
+			let memberKey = JSON.parse(this.memberKey);
+			if(item.url) {
+				this.$router.push({path: item.url})
+			}
 			if(item.text == '退出登录') {
 				Dialog.confirm({
 					message: '是否要退出当前账号！！'
@@ -103,11 +110,10 @@ export default {
 					params.append("token", memberKey.memberAccessToken)
 					this.$axios.post("/member-server/vmall/memberInfoLoginAndOut/out", params)
 					.then(res => {
-						localStorage.clear();
+						this.$store.dispatch("clearUserStore");
 						this.$router.push("/login");
 					})
 				})
-				
 			}
 		},
 		menuClick(item) {

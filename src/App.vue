@@ -26,7 +26,7 @@ export default {
 		let _this = this;
 		this.plusReady(() => {
 			var webview = plus.webview.currentWebview();
-      		webview.setBounce({position:{top:'100px'},changeoffset:{top:'0px'}});//设置Webview窗口的回弹效果
+//    		webview.setBounce({position:{top:'100px'},changeoffset:{top:'0px'}});//设置Webview窗口的回弹效果
       		var first = null;
       		plus.key.addEventListener('backbutton', function() {
       			webview.canBack(function (e) {

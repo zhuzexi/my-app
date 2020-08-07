@@ -56,8 +56,8 @@
 						<i></i>
 					</div>
 					<div class="other-con">
-						<div class="login-icon"><img src="../../assets/wechat.png" class="wechat" /></div>
-						<div class="login-icon"><img src="../../assets/qq.png" class="wechat" /></div>
+						<div @click="getLogin('weixin')" class="login-icon"><img src="../../assets/wechat.png" class="wechat" /></div>
+						<div @click="getLogin('qq')" class="login-icon"><img src="../../assets/qq.png" class="wechat" /></div>
 					</div>
 				</div>
 			</div>
@@ -79,7 +79,10 @@ export default {
 			errMsg: '',
 			usernameClose: true,
 			passwordClose: true,
-			passwordType: 0
+			passwordType: 0,
+			oauth: null,
+			auths: !window.localStorage.getItem('auths') ? null : JSON.parse(window.localStorage.getItem('auths')),
+			Params: {}, // 第三方登录参数
 		};
 	},
 	mounted() {
@@ -103,6 +106,63 @@ export default {
 //		})
 	},
 	methods: {
+		getLogin(type) {
+	        this.oauth = type;
+	        plus.oauth.getServices(success => {
+	          this.auths = success
+	          window.localStorage.setItem('auths', JSON.stringify(success))
+	          Toast(`正在获取第三方登录...`);
+	          console.log(JSON.stringify(success))
+	          this.oauthLogin(type)
+	        }, error => {
+	          plus.nativeUI.alert("获取登录授权服务列表失败：" + JSON.stringify(error));
+	        })
+	    },
+	    oauthLogin(type) {
+	        console.log('======type' + type);
+	        var s;
+	        this.auths.forEach((item, index) => {
+	          if (this.auths[index].id == type) {
+	            s = this.auths[index]
+	          }
+	        })
+	        if (!s.authResult) {
+	          s.login(res => {
+	            // this.$toast('第一个微信登录')
+	            this.authUserInfo(type);
+	          }, error => {
+	            plus.nativeUI.alert('error' + JSON.stringify(error));
+	          })
+	        } else {
+	          this.authUserInfo(type);
+	          // this.$toast('第二个微信登录，已授权登录');
+	        }
+	    },
+	    authUserInfo(type) {
+	        var s;
+	        this.auths.forEach((item, index) => {
+	          if (this.auths[index].id == type) {
+	            s = this.auths[index]
+	          }
+	        })
+	        // console.log('===========s' + JSON.stringify(s));
+	        if (s.authResult) {
+	          s.getUserInfo(res => {
+	            this.Params = {
+	              username: s.userInfo.nickname,
+	              avatar: s.userInfo.headimgurl,
+	              sex: s.userInfo.sex,
+	              openid: s.userInfo.openid,
+	              type: 2
+	            }
+	            console.log(JSON.stringify(s))
+	            console.log(JSON.stringify(res))
+	          }, error => {
+	            plus.nativeUI.alert(JSON.stringify(error));
+	            Toast('失败报错');
+	          })
+	        }
+	    },
 		focusText(e) {
 			let $className = e.currentTarget.className;
 			$className === 'login-username' ? (this.usernameClose = false) : (this.passwordClose = false);
@@ -154,22 +214,15 @@ export default {
 				spinnerType: 'fading-circle'
 			});
 			this.$axios.post('/member-server/vmall/memberInfoLoginAndOut/login' + params, {}).then(res => {
-				
-				console.log(res, '<-----info');
-
 				if (res.data.status == '200') {
-					// this.$toast('登录成功');
-					localStorage.setItem('memberKey', JSON.stringify(res.data.data.memberKey));
-					localStorage.setItem('memberInfo', JSON.stringify(res.data.data.memberInfo));
-
+					this.$store.dispatch("setMemberKey", JSON.stringify(res.data.data.memberKey));
+					this.$store.dispatch("setMemberInfo", JSON.stringify(res.data.data.memberInfo));
+//					localStorage.setItem('memberKey', JSON.stringify(res.data.data.memberKey));
+//					localStorage.setItem('memberInfo', JSON.stringify(res.data.data.memberInfo));
 					let _this = this;
-					
-
 					this.timer = setTimeout(function() {
-
 						_this.$router.push('./setuserinfo');
 						// _this.$router.push('./addchild');
-						
 						Indicator.close();
 					}, 2000);
 				} else {

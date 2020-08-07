@@ -160,7 +160,7 @@
 			</van-cell>
 			<van-form v-if="moreInfo">
 				<div class="address" v-for="(item, index) in addressList" :key="index">
-					<van-field @click="handleAddress(index)" v-model="item.provinceAndCity" label="地址" placeholder="地址" />
+					<van-field readonly @click="handleAddress(index)" v-model="item.provinceAndCity" label="地址" placeholder="地址" />
 					<van-field v-model="item.detailedAddress" label="详细地址" placeholder="详细地址" />
 				</div>
 				<van-button @click="addAddress" size="small" round block type="info" style="width: 50%; margin: 10px auto;">新增地址</van-button>
@@ -551,7 +551,7 @@
 			//地址确定
 			onSure(value) {
 				this.cityVisable = false;
-				this.addressList[this.addressIndex].areaId = value.map(item => item.id).join("");
+				this.addressList[this.addressIndex].areaId = value.map(item => item.id).join(",");
 				this.addressList[this.addressIndex].provinceAndCity = value.map(item => item.name).join("");
 			},
 			handleAddress(index) {

@@ -13,17 +13,17 @@ const Forget = r => require.ensure([], () => r(require('@/views/Forget/forget'))
 const SetUserInfo = r => require.ensure([], () => r(require('@/views/SetUserInfo/set-userinfo')), 'SetUserInfo')
 
 //添加父亲
-const AddFather = r => require.ensure([], () => r(require('@/views/SetUserInfo/add-father')), 'AddFather')
+//const AddFather = r => require.ensure([], () => r(require('@/views/SetUserInfo/add-father')), 'AddFather')
 //添加父亲(详细)
-const AddRelativesDetail = r => require.ensure([], () => r(require('@/views/Genealogy/add-father.vue')), 'AddRelativesDetail')
+//const AddRelativesDetail = r => require.ensure([], () => r(require('@/views/Genealogy/add-father.vue')), 'AddRelativesDetail')
 
 //添加配偶
-const AddPeiou = r => require.ensure([], () => r(require('@/views/SetUserInfo/set-peiou')), 'AddPeiou')
+//const AddPeiou = r => require.ensure([], () => r(require('@/views/SetUserInfo/set-peiou')), 'AddPeiou')
 //添加配偶(详细)
 
 
 //添加子女
-const AddChild = r => require.ensure([], () => r(require('@/views/SetUserInfo/set-child')), 'AddChild')
+//const AddChild = r => require.ensure([], () => r(require('@/views/SetUserInfo/set-child')), 'AddChild')
 //添加子女(详细)
 
 
@@ -96,34 +96,6 @@ export default new Router({
 				// index: 1
 			},
 			component: SetUserInfo
-		},
-		{
-			path: '/addfather',
-			meta: {
-				// index: 1
-			},
-			component: AddFather
-		},
-		{
-			path: '/addrelativesdetail',
-			meta: {
-				// index: 1
-			},
-			component: AddRelativesDetail
-		},
-		{
-			path: '/addpeiou',
-			meta: {
-				// index: 1
-			},
-			component: AddPeiou
-		},
-		{
-			path: '/addchild',
-			meta: {
-				// index: 1
-			},
-			component: AddChild
 		},
 		{
 			path: '/home',
@@ -207,42 +179,6 @@ export default new Router({
 			},
 		},
 		{
-			path: '/spouse',
-			name: 'spouse',
-			component: resolve => require(['@/views/Genealogy/spouse'], resolve),
-			meta: {
-				title: '添加配偶',
-				type: 'login' // 是否需要判断是否登录,这里是需要判断
-			}
-		},
-		{
-			path: '/organization',
-			name: 'organization',
-			component: resolve => require(['@/views/Genealogy/organization'], resolve),
-			meta: {
-				title: '组织机构修谱',
-				type: 'login' // 是否需要判断是否登录,这里是需要判断
-			}
-		},
-		{
-			path: '/v-father',
-			name: 'V-father',
-			component: resolve => require(['@/views/Genealogy/view-father'], resolve),
-			meta: {
-				title: '查看族人信息',
-				type: 'login' // 是否需要判断是否登录,这里是需要判断
-			},
-		},
-		{
-			path: '/u-father',
-			name: 'U-father',
-			component: resolve => require(['@/views/Genealogy/update-father'], resolve),
-			meta: {
-				title: '编辑族人信息',
-				type: 'login' // 是否需要判断是否登录,这里是需要判断
-			},
-		},
-		{
 			path: '/clancircle',
 			name: 'ClanCircle',
 			component: resolve => require(['@/views/ClanCircle/clancircle'], resolve),
@@ -266,6 +202,33 @@ export default new Router({
 			component: resolve => require(['@/views/contribute'], resolve),
 			meta: {
 				title: '功德',
+				type: 'login' // 是否需要判断是否登录,这里是需要判断
+			}
+		},
+		{
+			path: '/address',
+			name: 'address',
+			component: resolve => require(['@/views/Mine/address'], resolve),
+			meta: {
+				title: '地址管理',
+				type: 'login' // 是否需要判断是否登录,这里是需要判断
+			}
+		},
+		{
+			path: '/addressadd',
+			name: 'addressadd',
+			component: resolve => require(['@/views/Mine/addressAdd'], resolve),
+			meta: {
+				title: '地址管理',
+				type: 'login' // 是否需要判断是否登录,这里是需要判断
+			}
+		},
+		{
+			path: '/migrate',
+			name: 'migrate',
+			component: resolve => require(['@/views/migrate'], resolve),
+			meta: {
+				title: '迁徙图',
 				type: 'login' // 是否需要判断是否登录,这里是需要判断
 			}
 		}

@@ -23,9 +23,9 @@ service.interceptors.request.use(res => {
 });
 service.interceptors.response.use(res => {
   if(res.data.status === 401) {
-	window.localStorage.removeItem('memberKey');
-	window.localStorage.removeItem('memberInfo');
-	router.push('/login');
+		window.localStorage.removeItem('memberKey');
+		window.localStorage.removeItem('memberInfo');
+		router.push('/login');
   }
   return res;
 }, error => {
@@ -56,5 +56,4 @@ service.interceptors.response.use(res => {
 
   return "error";
 })
-
 export default service

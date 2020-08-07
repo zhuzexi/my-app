@@ -38,6 +38,9 @@ FastClick.attach(document.body);
 import VueDragResize from 'vue-drag-resize'
 Vue.component('vue-drag-resize', VueDragResize)
 
+/*
+ * 封装h5 plus
+ */
 import plusReady from './utils/plusready.js'
 Vue.prototype.plusReady = plusReady;
 
@@ -60,12 +63,6 @@ router.beforeEach((to, from, next) => {
   const type = to.meta.type
   let memberKeys = JSON.parse(localStorage.getItem("memberKey"));
   let memberKey = memberKeys && memberKeys.memberAccessToken;
-  
-  // if(memberKey){
-	 // memberKey = '';
-  // }
-  
-  // let memberKey = '';
   if(to.path == "/login") {
   	if(memberKey) {
   		next("/home")
@@ -83,52 +80,7 @@ router.beforeEach((to, from, next) => {
   		next();
   	}
   }
-  // 判断该路由是否需要登录权限
-//if (type === 'login') {
-//  if (memberKey) {
-//    next()
-//  } else {
-//    next('/login')
-//  }
-//} else {
-//  next()  // 确保一定要有next()被调用
-//}
 })
-//router.beforeEach((to, from, next) => {
-//
-//	if (to.meta.title) {
-//		document.title = to.meta.title
-//	}
-//	const type = to.meta.type
-//	let memberKeys = JSON.parse(localStorage.getItem("memberKey"));
-//	let memberKey = memberKeys && memberKeys.memberAccessToken;
-//
-//	// 18285057199
-//	/* 
-//	* 1，判断路由是否为引导页，如果是，直接进入引导页
-//	* 2，不是引导页，判断该路由是否为登陆页
-//	* 3，为登陆页时，判断是否登陆，已登陆跳转到首页，否则跳转到登陆页
-//	* 4，不为登陆页时。判断是否登陆，已登陆则正常跳转，否则跳转到登陆页
-//	*/
-//	console.log(type)
-//	if (to.path === '/guide' || type != 'login') {
-//		next();
-//	} else {
-//		if(to.path === '/login') {
-//			if(memberKey) {
-//				next('/home')
-//			} else {
-//				next()
-//			}
-//		} else {
-//			if(memberKey) {
-//				next()
-//			} else {
-//				next('/login')
-//			}
-//		}
-//	}
-//})
 
 new Vue({
 	router,

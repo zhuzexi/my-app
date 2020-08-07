@@ -4,12 +4,11 @@
 		<van-divider class="user_divider">
 			<div class="user_divider_div">
 				我要修谱 
-				<van-icon v-if="roleType == 1" @click="isUserManual = true" class="user_manual" name="fail" />
 			</div>
 		</van-divider>
 		<van-tabs v-model="activeName" type="card">
 			<van-tab title="吊线图" name="a" style="background: #e8e4d8;">
-				<div id="TreeChart" style="overflow-x:auto; overflow-y:auto; height: 420px; margin-top: 25px; position: relative; width: 100%;">
+				<div id="TreeChart" style="overflow:auto; height: 100vh; margin-top: 25px; position: relative; width: 100%;">
 					<TreeChart :json="data" @click-node="clickNode" :style="{ transform: 'scale(' + multiples + ')', transformOrigin: 'top left' }" />
 				</div>
 			</van-tab>
@@ -32,9 +31,6 @@
 			 </van-tab> 
 		</van-tabs>
 		
-		<van-popup class="userManual_popup" v-model="isUserManual" closeable close-icon="close" position="bottom" :style="{'min-height': '100%', padding:'5% 0'}">
-			<userManual />
-		</van-popup>
 		<!--操作弹出层-->
 		<van-overlay class="handle_wrapper" :show="handleModal" @click="handleModalClick">
 		  	<div class="wrapper" @click.stop v-show="isHandle">
@@ -81,34 +77,19 @@
 import { Tab, Tabs, Divider, Button, TreeSelect, Notify, List } from 'vant';
 import mHeader from '../../components/common/m-header';
 import TreeChart from "@/components/TreeChart";
-//import TreeChart from '../../components/common/TreeChart.vue';
-import organization from './organization.vue'
-import userManual from './user-manual.vue'
 import { genealogy as net } from "@/api"
 export default {
 	components: {
 		mHeader,
 		TreeChart,
-		organization,
-		userManual
-		// VueDragResize
 	},
 	data() {
 		return {
 			isHandle: true,
 			handleModal: false,
-			isUserManual: false,
 			tableDatas: [],
 			cf_id:0,
 			role:'',//角色
-			showMenu: false,//自己
-			showMenuOther:false,//其他人
-			
-			showAddMenu:false,//添加菜单
-			showUpdateMenu:false,//编辑菜单
-			
-			showConfirmButton:false,
-			
 			width: document.body.clientWidth,
 			fullscreen: false,
 			multiples: 1,
@@ -209,7 +190,6 @@ export default {
 		clickNode: function(node) {
 			this.nodeData = node;
 			this.addActive = node.thisId == this.memberKey.memberInfoId;
-//			this.handleModal = false;
 			if(this.node_id != node.id) {
 				if(node.role == '配偶') {
 					//获取配偶数据
@@ -224,9 +204,9 @@ export default {
 		},
 		//获取配偶的吊线图数据
 		getSpouseLine(node) {
-			this.$axios.get('/member-server/vmall/memberWifeRepairSpectrum/orgQueryMemberTree?id=' + node.id)
+			net.getSpouseLine(node.id)
 			.then(res => {
-				let list = res.data.data;
+				let list = res.data;
 				if (res.status == '200') {
 					this.yz(list);
 				} else {
@@ -235,91 +215,38 @@ export default {
 			})
 			.catch(err => console.log(err))
 		},
-		showViewMenuInfo:function(){
-			this.$router.push({
-				path:'./v-father',
-				query:{
-					id:this.cf_id,
-					role:this.role
-			}});
-		},
-		showAddMenuInfo:function(){
-			this.showAddMenu = true;
-			this.showMenu = false;
-		},
-		showUpdateMenuInfo:function(){
-			if(this.role){
-				this.$router.push({
-					path:'./u-father',
-					query:{
-						id:this.cf_id,
-						role:this.role
-				}});
-			}else{
-				this.$router.push({
-					path: '/organization',
-					query:{
-						id:this.cf_id
-					}
-				})
-			}
-			
-		},
-
 		//获取吊线信息
 		async getLine(id) {
 			net.getLine(id)
-				.then(res => {
-					let list = res.data.data;
-					if (res.status == '200') {
-						this.yz(list);
-					} else {
-						this.$toast(res.message);
-					}
-				})
-			//拼接参数
-			//接口调用
-			this.$axios
-				.get('/member-server/vmall/memberRepairSpectrum/orgQueryMemberTree?id=' + id, {
-					headers: {
-						'content-type': 'application/json',
-						memberAccessToken: this.memberKey.memberAccessToken
-					}
-				})
-				.then(res => {
-					let list = res.data.data;
-					if (res.status == '200') {
-						this.yz(list);
-					} else {
-						this.$toast(res.message);
-					}
-				});
+			.then(res => {
+				let list = res.data;
+				let arr = list[0].children[2]
+//				list[0].children.pop();
+//				list[0].children.unshift(arr);
+//				delete list[0].children[1].children;
+				if (res.status == '200') {
+					this.yz(list);
+				} else {
+					this.$toast(res.message);
+				}
+			})
 		},
 		async yz(list) {
-			//拼接参数
-			let params = '?id=' + this.memberInfo.id;
-			//接口调用
-			this.$axios
-				.get('/member-server/vmall/memberRepairSpectrum/wfpz' + params, {
-					headers: {
-						'content-type': 'application/json',
-						memberAccessToken: this.memberKey.memberAccessToken
-					}
-				})
-				.then(res1 => {
-					if (res1.status == '200') {
-						this.codeList = res1.data.data.map(item => item.code);
-						let index = 0;
-						let data = this.handleChild(list, res1.data.data, index, []);
-						this.data = data.list[0];
-						this.tableDatas = data.tableData.sort(function(a, b) {
-							return a.index - b.index
-						});
-					} else {
-						let info = res1.message;
-						this.$toast(info);
-					}
-				});
+			net.getLineInfo(this.memberInfo.id)
+			.then(res => {
+				if (res.status == '200') {
+					this.codeList = res.data.map(item => item.code);
+					let index = 0;
+					let data = this.handleChild(list, res.data, index, []);
+					this.data = data.list[0];
+					this.tableDatas = data.tableData.sort(function(a, b) {
+						return a.index - b.index
+					});
+				} else {
+					this.$toast(res.message);
+				}
+			})
+			.catch(err => console.log(err))
 		},
 		handleChild(list, codeList, index, tableData) {
 			var id = this.memberInfo.id;

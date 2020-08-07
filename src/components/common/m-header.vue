@@ -5,31 +5,8 @@
 			    <van-icon @click="showShare = true" v-if="share" name="ellipsis" size="18" />
 			</template>
 		</van-nav-bar>
-		<m-share :show-share='showShare'></m-share>
-		<!--<van-share-sheet
-			class="share"
-		  v-model="showShare"
-		  title="立即分享给好友"
-		  :options="options"
-		  @select="onSelect"
-		/>-->
-		<!--<p>这是shareObj</p>
-		<div>
-			{{shareObj}}
-		</div>
-		<p>这是target</p>
-		<div>{{target}}</div>-->
-		<!--<div id="">
-			<span v-for="(item, index) in shareObj" :key="index">
-				{{item}}
-			</span>
-		</div>-->
+		<m-share @on-change="shareChange" :show-share='showShare'></m-share>
 	</div>
-	<!-- <header class="wrap">
-		<i class="iconfont icon-left" @click="goBack"></i>
-		<span>{{ mTitle }}</span>
-	</header> -->
-	
 </template>
 
 <script>
@@ -61,6 +38,9 @@ export default {
 		}
 	},
 	methods: {
+		shareChange(val) {
+			this.showShare = val;
+		},
 		goBack() {
 			this.$router.go(-1);
 		},
