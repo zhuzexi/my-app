@@ -71,6 +71,7 @@
 							};
 							return item;
 						});
+						console.log(this.list)
 					}
 				})
 				.catch(err => console.log(err))
